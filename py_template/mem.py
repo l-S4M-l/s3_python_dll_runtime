@@ -54,26 +54,81 @@ class GameMemoryClient:
     def write_abs(self, address, data):
         self.request({"cmd": "write_abs", "address": int(address), "data": bytes(data).hex()})
 
-    def read_int(self, module, offset):
-        return struct.unpack("<i", self.read_bytes(module, offset, 4))[0]
+    def _prefix(self, endian):
+        if endian in ("big", "be", ">"):
+            return ">"
+        if endian in ("little", "le", "<"):
+            return "<"
+        raise ValueError("endian must be 'big' or 'little'")
 
-    def write_int(self, module, offset, value):
-        self.write_bytes(module, offset, struct.pack("<i", int(value)))
+    def read_int(self, module, offset, endian="big"):
+        return struct.unpack(self._prefix(endian) + "i", self.read_bytes(module, offset, 4))[0]
 
-    def read_uint(self, module, offset):
-        return struct.unpack("<I", self.read_bytes(module, offset, 4))[0]
+    def write_int(self, module, offset, value, endian="big"):
+        self.write_bytes(module, offset, struct.pack(self._prefix(endian) + "i", int(value)))
 
-    def write_uint(self, module, offset, value):
-        self.write_bytes(module, offset, struct.pack("<I", int(value)))
+    def read_uint(self, module, offset, endian="big"):
+        return struct.unpack(self._prefix(endian) + "I", self.read_bytes(module, offset, 4))[0]
 
-    def read_float(self, module, offset):
-        return struct.unpack("<f", self.read_bytes(module, offset, 4))[0]
+    def write_uint(self, module, offset, value, endian="big"):
+        self.write_bytes(module, offset, struct.pack(self._prefix(endian) + "I", int(value)))
 
-    def write_float(self, module, offset, value):
-        self.write_bytes(module, offset, struct.pack("<f", float(value)))
+    def read_float(self, module, offset, endian="big"):
+        return struct.unpack(self._prefix(endian) + "f", self.read_bytes(module, offset, 4))[0]
 
-    def read_double(self, module, offset):
-        return struct.unpack("<d", self.read_bytes(module, offset, 8))[0]
+    def write_float(self, module, offset, value, endian="big"):
+        self.write_bytes(module, offset, struct.pack(self._prefix(endian) + "f", float(value)))
 
-    def write_double(self, module, offset, value):
-        self.write_bytes(module, offset, struct.pack("<d", float(value)))
+    def read_double(self, module, offset, endian="big"):
+        return struct.unpack(self._prefix(endian) + "d", self.read_bytes(module, offset, 8))[0]
+
+    def write_double(self, module, offset, value, endian="big"):
+        self.write_bytes(module, offset, struct.pack(self._prefix(endian) + "d", float(value)))
+
+    def read_int_big_endian(self, module, offset):
+        return self.read_int(module, offset, "big")
+
+    def write_int_big_endian(self, module, offset, value):
+        self.write_int(module, offset, value, "big")
+
+    def read_uint_big_endian(self, module, offset):
+        return self.read_uint(module, offset, "big")
+
+    def write_uint_big_endian(self, module, offset, value):
+        self.write_uint(module, offset, value, "big")
+
+    def read_float_big_endian(self, module, offset):
+        return self.read_float(module, offset, "big")
+
+    def write_float_big_endian(self, module, offset, value):
+        self.write_float(module, offset, value, "big")
+
+    def read_double_big_endian(self, module, offset):
+        return self.read_double(module, offset, "big")
+
+    def write_double_big_endian(self, module, offset, value):
+        self.write_double(module, offset, value, "big")
+
+    def read_int_little_endian(self, module, offset):
+        return self.read_int(module, offset, "little")
+
+    def write_int_little_endian(self, module, offset, value):
+        self.write_int(module, offset, value, "little")
+
+    def read_uint_little_endian(self, module, offset):
+        return self.read_uint(module, offset, "little")
+
+    def write_uint_little_endian(self, module, offset, value):
+        self.write_uint(module, offset, value, "little")
+
+    def read_float_little_endian(self, module, offset):
+        return self.read_float(module, offset, "little")
+
+    def write_float_little_endian(self, module, offset, value):
+        self.write_float(module, offset, value, "little")
+
+    def read_double_little_endian(self, module, offset):
+        return self.read_double(module, offset, "little")
+
+    def write_double_little_endian(self, module, offset, value):
+        self.write_double(module, offset, value, "little")

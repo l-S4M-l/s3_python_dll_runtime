@@ -134,6 +134,15 @@ Supported commands:
 
 Reads return hex strings. Writes accept hex strings. Memory access is limited to the current process that loaded the DLL.
 
+`mem.py` typed helpers default to big-endian because Skate 3 values are normally big-endian:
+
+```python
+mem.write_float("game.exe", 0x123456, 1.0)
+mem.write_uint_big_endian("game.exe", 0x123456, 123)
+mem.write_uint_little_endian("game.exe", 0x123456, 123)
+mem.write_int("game.exe", 0x123456, -1, endian="little")
+```
+
 ## Troubleshooting
 
 Check `GameFolder\python_runner.log` first.
